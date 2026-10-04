@@ -149,3 +149,45 @@ const renderLobi = (s, sebagaiGuru) => {
     ul.append(li);
   });
 };
+
+// UNTUK ADMIN
+$("lihat-pass").addEventListener("change", (e) => { $("pin").type = e.target.checked ? "text" : "password"; });
+
+$("form-login").addEventListener("submit", (e) => {
+  e.preventDefault();
+  if ($("user").value.trim().toLowerCase() === USER_GURU && $("pin").value === PIN_GURU) { // percabangan: cek username + password
+    $("pesan-login").textContent = "";
+    $("pin").value = "";
+    $("user").value = "";
+    $("lihat-pass").checked = false; $("pin").type = "password";
+    kuisEdit = null;
+    $("editor").hidden = true;
+    tampilkan("guru-panel");
+  } else {
+    $("pesan-login").textContent = "Username atau password salah, coba lagi.";
+  }
+});
+
+// Daftar kuis dan tombol Mainkan / Edit / Laporan / Hapus
+const renderDaftarKuis = () => {
+  const ul = $("daftar-kuis");
+  ul.innerHTML = "";
+  daftarKuis.forEach((k) => {
+    const li = buatEl("li");
+    li.append(buatEl("strong", "", `${k.judul} (${k.soal.length} soal)`));
+    const aksi = buatEl("div", "aksi");
+    const tombol = [
+      ["▶ Mainkan", "biru", () => bukaRuangan(k)],
+      ["Edit", "biru", () => bukaEditor(k)],
+      ["Laporan", "biru", () => bukaLaporan(k)],
+      ["Hapus", "", () => hapusKuis(k.kode)],
+    ];
+    tombol.forEach(([teks, kelas, fn]) => {
+      const b = buatEl("button", kelas, teks);
+      b.addEventListener("click", fn);
+      aksi.append(b);
+    });
+    li.append(aksi);
+    ul.append(li);
+  });
+};

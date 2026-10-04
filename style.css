@@ -409,3 +409,12 @@ footer {
   }
 }
 
+/* Bentuk kartu, tombol & PIN */
+h2 { text-align: center; }
+#beranda > p { text-align: center; color: var(--abu); }
+.card { border-radius: 20px; }
+.btn { border-radius: 12px; }
+.kode-form input::placeholder { color: #bbb; }
+.kode-form label { font-weight: 700; font-size: .9rem; }
+.kode-form { max-width: 400px; }
+

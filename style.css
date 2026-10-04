@@ -162,3 +162,175 @@ fieldset {
   background: #fff3c4;
   border-radius: 8px;
 }
+/* LAYAR KUIS */
+.status {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.timer {
+  height: 14px;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+}
+#bar-waktu {
+  height: 100%;
+  width: 100%;
+  background: var(--hijau);
+  transition: width .1s linear;
+}
+#teks-soal {
+  text-align: center;
+  margin: 24px 0;
+}
+.pilihan {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spasi);
+}
+.opsi-btn {
+  color: #fff;
+  border: 0;
+  border-radius: var(--radius);
+  padding: 28px 12px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .15s, opacity .3s;
+}
+.opsi-btn:hover:not(:disabled) {
+  transform: scale(1.04);
+}
+.opsi-btn:nth-child(1) {
+  background: var(--merah);
+}
+.opsi-btn:nth-child(2) {
+  background: var(--biru);
+}
+.opsi-btn:nth-child(3) {
+  background: var(--kuning);
+}
+.opsi-btn:nth-child(4) {
+  background: var(--hijau);
+}
+.opsi-btn.salah {
+  opacity: .3;
+}
+.opsi-btn.benar {
+  outline: 5px solid #000;
+  animation: goyang .4s;
+}
+.umpan {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  min-height: 1.6em;
+}
+@keyframes goyang {
+  25% {
+    transform: rotate(-3deg);
+  } 
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+footer {
+  text-align: center;
+  padding: 12px;
+  color: var(--abu);
+}
+
+/* Respon ipad */
+@media (max-width: 768px) {
+  .panel-grid { grid-template-columns: 1fr; }
+}
+/* Respon hp */
+@media (max-width: 480px) {
+  .role-grid, .pilihan { grid-template-columns: 1fr; }
+  .opsi-btn { padding: 18px 12px; }
+  .topbar h1 { font-size: 1.15rem; }
+}
+
+/* Form gabung, pilih avatar & daftar kuis Admin */
+.kode-form {
+  margin: 0 auto;
+  text-align: center;
+}
+.kode-form input {
+  font-size: 1.8rem;
+  text-align: center;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+}
+.guru-link {
+  text-align: center;
+}
+.link-btn {
+  background: none;
+  border: 0;
+  color: var(--biru);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 1rem;
+}
+.avatar-grid {
+  display: grid;]
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.avatar-grid label {
+  cursor: pointer;
+}
+.avatar-grid input {
+  position: absolute;
+  opacity: 0;
+}
+.avatar-grid span {
+  display: block;
+  text-align: center;
+  font-size: 2rem;
+  padding: 8px;
+  border: 3px solid transparent;
+  border-radius: 12px;
+  background: var(--ungu-muda);
+  transition: transform .15s;
+}
+.avatar-grid span:hover {
+  transform: scale(1.1);
+}
+.avatar-grid input:checked + span {
+  border-color: var(--ungu);
+  background: #fff3c4;
+}
+.avatar-grid input:focus-visible + span {
+  outline: 3px solid var(--biru);
+}
+.daftar .kode {
+  background: var(--ungu-muda);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-family: monospace;
+  font-weight: 700;
+}
+.aksi {
+  display: flex;
+  gap: 6px;
+}
+.aksi .biru {
+  background: var(--biru);
+}
+.bar {
+  height: 10px;
+  background: #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  width: 100px;
+}
+.bar div {
+  height: 100%;
+  background: var(--hijau);
+}

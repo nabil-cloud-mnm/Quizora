@@ -63,3 +63,37 @@ const buatEl = (tag, kelas, teks) => {
   return e;
 };
 
+// Menampilkan satu layar dan hide yang lain
+const tampilkan = (idLayar) => {
+  document.querySelectorAll(".view").forEach((v) => (v.hidden = v.id !== idLayar));
+  if (idLayar !== "live-siswa") { clearInterval(timerIntro); $("intro").hidden = true; }
+  document.body.dataset.view = idLayar;
+  Efek.layar(idLayar, !!ruang);
+  if (idLayar === "guru-panel") renderDaftarKuis();
+};
+
+// Urutkan pemain dari skor tertinggi
+const urutkan = (pemain) => [...pemain].sort((a, b) => b.skor - a.skor);
+
+// Keluar dari ruangan untuk hentikan timer, tutup kanal, reset state
+const keluar = () => {
+  clearInterval(timerRuang);
+  clearTimeout(timeoutCek);
+  if (kanal) kanal.close();
+  if (peer) peer.destroy();
+  if (klienMqtt) klienMqtt.end(true);
+  klienMqtt = null; topikKirim = null;
+  kanal = null; peer = null; koneksi = []; ruang = null; saya = null;
+};
+
+// Kirim pesan lewat dua jalur antar tab dan antar device
+const kirim = (msg) => {   
+  if (kanal) kanal.postMessage(msg);
+  koneksi.forEach((c) => { if (c.open) c.send(msg); });
+  if (klienMqtt && klienMqtt.connected) klienMqtt.publish(topikKirim, JSON.stringify(msg));
+};
+
+// Semua tombol dengan data-view berpindah layar
+document.querySelectorAll("[data-view]").forEach((btn) =>
+  btn.addEventListener("click", () => { keluar(); tampilkan(btn.dataset.view); })
+);

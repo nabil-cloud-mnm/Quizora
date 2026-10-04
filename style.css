@@ -572,3 +572,46 @@ body:not([data-view]) .topbar {
   margin-right: auto; 
 }
 
+/* Streak api */
+#info-streak.api { 
+  background: linear-gradient(90deg, #ff9800, #ff5722); 
+  color: #fff; 
+  padding: 2px 12px; 
+  border-radius: 20px; 
+  animation: denyut .9s ease-in-out infinite; box-shadow: 0 0 12px rgba(255,87,34,.7); 
+}
+#streak-pop { 
+  position: fixed; 
+  inset: 0; 
+  z-index: 20; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 6px; 
+  background: rgba(20,20,60,.75); 
+  color: #fff; 
+  text-align: center; 
+  pointer-events: none; 
+}
+#streak-pop.jalan { 
+  animation: munculApi 2.2s ease forwards; 
+}
+.api-besar { 
+  font-size: 7rem; 
+  line-height: 1; 
+  filter: drop-shadow(0 0 24px #ff6d00); 
+  animation: nyala .5s ease-in-out infinite alternate; 
+}
+#streak-teks { 
+  font-size: 2.6rem; 
+  font-weight: 800; 
+  text-shadow: 0 3px 0 rgba(0,0,0,.4); 
+}
+#streak-bonus { 
+  font-size: 1.3rem; 
+  font-weight: 700; color: #ffd54f; 
+}
+@keyframes nyala { from { transform: scale(1) rotate(-4deg); } to { transform: scale(1.15) rotate(4deg); } }
+@keyframes munculApi { 0% { opacity: 0; } 12%, 80% { opacity: 1; } 100% { opacity: 0; } }
+

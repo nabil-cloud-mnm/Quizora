@@ -22,3 +22,44 @@ const kuisAwal = [{
     { id: 10, pertanyaan: "Berapa hasil 3 x 3 x 3?", pilihan: ["9", "18", "27", "36"], benar: 2, waktu: 20 },
   ],
 }];
+
+const muat = (kunci, cadangan) => {
+  try { return JSON.parse(localStorage.getItem(kunci)) || cadangan; }
+  catch { return cadangan; }
+};
+const simpan = (kunci, data) => localStorage.setItem(kunci, JSON.stringify(data));
+
+let daftarKuis = muat(KUNCI_KUIS, kuisAwal);
+
+daftarKuis.forEach((k) => { if (k.kode === "MATH01" && k.soal.length === 4) k.soal = kuisAwal[0].soal; });
+simpan(KUNCI_KUIS, daftarKuis);
+let semuaHasil = muat(KUNCI_HASIL, []);       // laporan hasil akhir
+let kuisEdit = null;   // kuis edit admin
+let ruang = null;      // state ruangan di admin
+let saya = null;       // data user only
+let kanal = null;      // BroadcastChannel only tab
+let peer = null;       // objek PeerJS all device
+let koneksi = [];      // admin ke useer, user ke admin
+let klienMqtt = null;  // klien MQTT (relay lewat broker publik)
+let topikKirim = null; // topik tujuan pengiriman MQTT
+let jaringan = {};     // status jalur jaringan (untuk ditampilkan ke guru)
+const BROKER = "wss://broker.emqx.io:8084/mqtt";
+let timerRuang = null; // timer milik guru
+let timerIntro = null; // timer hitung mundur
+let timeoutCek = null; // timeout pengecekan PIN
+
+//FUNGSI BANTU
+const $ = (id) => document.getElementById(id);
+
+// Membuat elemen dengan textContent
+// kelas gerak0..gerak7
+const karakter = (a) => buatEl("span", `kar gerak${Math.max(0, AVATAR.indexOf(a))}`, a);
+const setKarakter = (el, a) => { el.textContent = a; el.className = `kar gerak${Math.max(0, AVATAR.indexOf(a))}`; };
+
+const buatEl = (tag, kelas, teks) => {
+  const e = document.createElement(tag);
+  if (kelas) e.className = kelas;
+  if (teks !== undefined) e.textContent = teks;
+  return e;
+};
+

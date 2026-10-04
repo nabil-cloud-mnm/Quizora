@@ -191,3 +191,30 @@ const renderDaftarKuis = () => {
     ul.append(li);
   });
 };
+
+// id create 
+const buatKode = () => {
+  let kode;
+  do { kode = Math.random().toString(36).slice(2, 8).toUpperCase(); }
+  while (daftarKuis.some((k) => k.kode === kode));
+  return kode;
+};
+
+$("form-kuis").addEventListener("submit", (e) => {
+  e.preventDefault();
+  daftarKuis.push({ kode: buatKode(), judul: $("judul-kuis").value.trim(), soal: [] });
+  simpan(KUNCI_KUIS, daftarKuis);
+  e.target.reset();
+  renderDaftarKuis();
+});
+
+const hapusKuis = (kode) => {
+  if (!confirm("Hapus kuis ini beserta hasilnya?")) return;
+  daftarKuis = daftarKuis.filter((k) => k.kode !== kode);
+  semuaHasil = semuaHasil.filter((h) => h.kode !== kode);
+  simpan(KUNCI_KUIS, daftarKuis);
+  simpan(KUNCI_HASIL, semuaHasil);
+  if (kuisEdit && kuisEdit.kode === kode) { kuisEdit = null; $("editor").hidden = true; }
+  renderDaftarKuis();
+};
+

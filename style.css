@@ -1,6 +1,6 @@
 :root {
-  --ungu: #232f87;
-  --ungu-muda: #ecf7ff;
+  --utama: #232f87;
+  --utama-muda: #ecf7ff;
   --merah: #e21b3c;
   --biru: #3b6bd0;
   --kuning: #d89e00;
@@ -8,6 +8,8 @@
   --abu: #666;
   --radius: 14px;
   --spasi: 16px;
+  --teks: #1d2433;
+  --latar: linear-gradient(180deg, #3d6bd6 0%, #2d4fb0 55%, #232f87 100%);
   font-family: "Inter", "Segoe UI", system-ui, sans-serif;
 }
 
@@ -75,30 +77,33 @@ main {
 /* UMUM */
 .card { 
   background: #fff; 
-  border-radius: var(--radius); 
+  border-radius: 20px; 
   padding: 20px; 
-  box-shadow: 0 4px 12px rgba(0,0,0,.1); 
+  box-shadow: 0 2px 10px rgba(35,47,135,.12); 
 }
 .btn { 
-  background: var(--ungu); 
+  background: var(--utama); 
   color: #fff; 
   border: 0; 
-  border-radius: 10px; 
+  border-radius: 12px; 
   padding: 12px 20px; 
   font-size: 1rem; 
   font-weight: 700; 
   cursor: pointer; 
-  transition: transform .15s; 
+  box-shadow: 0 4px 0 #161f5e; 
+  transition: transform .15s, box-shadow .15s; 
 }
 .btn:hover { 
-  transform: scale(1.05);
+  transform: translateY(-1px); 
 }
 .btn.alt {
-  background: var(--biru);
+  background: var(--biru); 
+  box-shadow: 0 4px 0 #264a96;
 }
 .btn.danger {
   background: var(--merah);
   margin-top: var(--spasi);
+  box-shadow: 0 4px 0 #a01229;
 }
 .form {
   display: flex;
@@ -411,3 +416,72 @@ h2 { text-align: center; }
 .kode-form label { font-weight: 700; font-size: .9rem; }
 .kode-form { max-width: 400px; }
 
+/* Latar ungu, kartu putih, tombol gelap */
+:root {
+  --latar: linear-gradient(180deg, #6b4fa8 0%, #5b3d9a 55%, #4a2a80 100%);
+  --gelap: #333;
+}
+body {
+  background: var(--latar);
+  background-attachment: fixed;
+}
+.topbar {
+  background: #1f1b2b;
+}
+.view > h2, .view > p, footer, .status {
+  color: #fff;
+}
+.view > h2 {
+  text-shadow: 0 3px 0 rgba(0,0,0,.25);
+  font-weight: 800;
+}
+.card, .form {
+  color: #222;
+}
+.card label, .form label {
+  font-weight: 700;
+}
+.btn {
+  background: var(--gelap);
+  box-shadow: 0 4px 0 #1a1a1a;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #1a1a1a;
+}
+.btn.alt {
+  background: var(--biru);
+  box-shadow: 0 4px 0 #264a96;
+}
+.btn.danger {
+  box-shadow: 0 4px 0 #a01229;
+}
+#gabung .form, #beranda .form {
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 6px;
+  padding: 16px;
+}
+#gabung h2 {
+  margin-bottom: 12px;
+}
+#gabung input[type=text] {
+  font-weight: 700;
+}
+.avatar-grid span {
+  background: #f1e9ff;
+}
+.avatar-grid input:checked + span {
+  border-color: var(--gelap);
+}
+.catatan {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 24px;
+}
+.link-btn {
+  color: #fff;
+}

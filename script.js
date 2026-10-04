@@ -927,3 +927,587 @@ const bukaLaporan = (kuis) => {
   tampilkan("laporan");
 };
 
+// SISI USER
+// PILIHAN AVATAR
+
+// Membuat pilihan avatar menggunakan radio button
+// dengan gambar emoji.
+const renderAvatar = () => {
+  const wadah = $("avatar-pilih");
+
+  wadah.innerHTML = "";
+
+  AVATAR.forEach((a, i) => {
+    const label = buatEl("label");
+    const radio = buatEl("input");
+
+    radio.type = "radio";
+    radio.name = "avatar";
+    radio.value = a;
+    radio.checked = i === 0;
+
+    radio.setAttribute(
+      "aria-label",
+      `Avatar ${a}`
+    );
+
+    label.append(
+      radio,
+      buatEl("span", "pilih-avatar", a)
+    );
+
+    wadah.append(label);
+  });
+};
+
+// USER MEMASUKKAN PIN
+
+// User memasukkan PIN untuk mencari ruangan kuis.
+$("form-kode").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  keluar();
+
+  const pin = $("kode").value.trim();
+
+  // Membuat identitas user
+  saya = {
+    pin: pin,
+    id: `${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 7)}`,
+    tahap: "cek",
+    indexTampil: -1,
+    pilih: null
+  };
+  
+  // KONEKSI ANTAR TAB
+
+  kanal = new BroadcastChannel("kuisseru");
+
+  kanal.onmessage = (ev) => {
+    terimaSiswa(ev.data);
+  };
+
+  $("pesan-kode").textContent =
+    "Mencari ruangan...";
+
+  // Mengirim pesan melalui BroadcastChannel
+  kanal.postMessage({
+    pin: pin,
+    tipe: "cek"
+  });
+
+  // KONEKSI ANTAR PERANGKAT MENGGUNAKAN PEERJS
+  if (typeof Peer !== "undefined") {
+    peer = new Peer();
+
+    peer.on("open", () => {
+      if (!saya) return;
+
+      const c = peer.connect(
+        "kuisseru-" + pin,
+        {
+          serialization: "json"
+        }
+      );
+
+      c.on("open", () => {
+        koneksi = [c];
+
+        kirim({
+          pin: pin,
+          tipe: "cek"
+        });
+      });
+
+      c.on("data", terimaSiswa);
+    });
+
+    peer.on("error", () => {});
+  }
+
+  // KONEKSI MENGGUNAKAN MQTT
+
+  sambungMqtt(
+    pin,
+    false,
+    terimaSiswa,
+    (ok) => {
+      if (ok && saya) {
+        kirim({
+          pin: pin,
+          tipe: "cek"
+        });
+      }
+    }
+  );
+
+
+  // TIMEOUT PENCARIAN RUANGAN
+
+  // Jika tidak ada balasan selama 6 detik,
+  // ruangan dianggap tidak ditemukan.
+  timeoutCek = setTimeout(() => {
+    $("pesan-kode").textContent =
+      "Ruangan tidak ditemukan. Cek PIN dan pastikan guru sudah membuka ruangan.";
+  }, 6000);
+});
+
+
+// USER MENGISI NAMA DAN AVATAR
+
+$("form-nama").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  // Mengambil nama user
+  saya.nama = $("nama").value.trim();
+
+  // Mengambil avatar yang dipilih
+  saya.avatar =
+    document.querySelector(
+      'input[name="avatar"]:checked'
+    ).value;
+
+  // Mengubah tahap menjadi halaman utama
+  saya.tahap = "main";
+
+  // Mengirim permintaan bergabung ke admin
+  kirim({
+    pin: saya.pin,
+    tipe: "gabung",
+    id: saya.id,
+    nama: saya.nama,
+    avatar: saya.avatar
+  });
+});
+
+
+// MENERIMA KEADAAN DARI aDMIN
+
+const terimaSiswa = (msg) => {
+
+  // Abaikan pesan jika:
+  // - user belum terdaftar
+  // - PIN tidak sesuai
+  // - pesan bukan berupa state
+  if (
+    !saya ||
+    msg.pin !== saya.pin ||
+    msg.tipe !== "state"
+  ) {
+    return;
+  }
+
+  const s = msg.s;
+
+
+  // TAHAP CEK RUANGAN
+
+  if (saya.tahap === "cek") {
+
+    clearTimeout(timeoutCek);
+
+    // Jika kuis sudah dimulai,
+    // user tidak bisa bergabung.
+    if (s.status !== "lobi") {
+      $("pesan-kode").textContent =
+        "Kuis sudah dimulai, tidak bisa bergabung.";
+
+      return;
+    }
+
+    $("pesan-kode").textContent = "";
+
+    $("judul-gabung").textContent =
+      s.judul;
+
+    renderAvatar();
+
+    saya.tahap = "gabung";
+
+    tampilkan("gabung");
+
+
+  // TAHAP UTAMA
+
+  } else if (saya.tahap === "main") {
+
+    renderSiswa(s);
+  }
+};
+
+
+// INTRO PERTANYAAN
+
+// Menampilkan tulisan "Pertanyaan N"
+// dengan hitungan mundur 3 detik.
+const tampilIntro = (n) => {
+
+  let t = 3;
+
+
+  // Mengatur tampilan angka countdown
+  const atur = () => {
+
+    $("intro-angka").textContent = t;
+
+    Efek.tik();
+
+    $("intro-lingkar").style.setProperty(
+      "--p",
+      `${(t / 3) * 360}deg`
+    );
+  };
+
+
+  $("intro-judul").textContent =
+    `Pertanyaan ${n}`;
+
+  $("intro").hidden = false;
+
+  atur();
+
+  clearInterval(timerIntro);
+
+
+  // Countdown 3 → 2 → 1
+  timerIntro = setInterval(() => {
+
+    t--;
+
+    if (t <= 0) {
+      clearInterval(timerIntro);
+      $("intro").hidden = true;
+
+    } else {
+      atur();
+    }
+
+  }, 1000);
+};
+
+
+// MENAMPILKAN LAYAR USER
+
+// Menggambar layar user berdasarkan keadaan dari admin.
+const renderSiswa = (s) => {
+
+  // Mencari data user yang sedang menggunakan perangkat ini
+  const aku = s.pemain.find(
+    (p) => p.id === saya.id
+  );
+
+  // Jika user belum terdaftar di admin
+  if (!aku) return;
+
+
+  // STATUS LOBI
+
+  if (s.status === "lobi") {
+    renderLobi(s, false);
+    tampilkan("lobi");
+
+    return;
+  }
+
+
+  // STATUS SELESAI
+
+  if (s.status === "selesai") {
+
+    const rank =
+      urutkan(s.pemain).findIndex(
+        (p) => p.id === saya.id
+      ) + 1;
+
+    $("hasil-akhir").textContent =
+      `${aku.avatar} ${aku.nama}: peringkat ${rank} dengan ${aku.skor} poin`;
+
+    isiPodium(
+      s.pemain,
+      saya.id
+    );
+
+    isiPeringkat(
+      $("daftar-skor"),
+      s.pemain,
+      saya.id,
+      10,
+      3
+    );
+
+    tampilkan("papan");
+
+    return;
+  }
+
+
+  // STATUS SOAL / HASIL
+
+  tampilkan("live-siswa");
+
+  const hasil =
+    s.status === "hasil";
+
+
+  // MEMBUAT TOMBOL JAWABAN
+
+  // Tombol jawaban hanya dibuat sekali
+  // untuk setiap soal.
+  if (saya.indexTampil !== s.index) {
+
+    saya.indexTampil = s.index;
+    saya.pilih = null;
+
+
+    // Tampilkan intro hanya ketika soal sedang berjalan
+    if (s.status !== "hasil") {
+      tampilIntro(s.index + 1);
+    }
+
+
+    // Tampilkan pertanyaan
+    $("teks-soal").textContent =
+      s.soal.pertanyaan;
+
+
+    const wadah = $("pilihan");
+
+    wadah.innerHTML = "";
+
+
+    // Membuat tombol untuk setiap pilihan
+    s.soal.pilihan.forEach((teks, i) => {
+
+      const b = buatEl(
+        "button",
+        "opsi-btn",
+        `${SIMBOL[i]} ${teks}`
+      );
+
+
+      // Ketika user memilih jawaban
+      b.addEventListener("click", () => {
+
+        saya.pilih = i;
+
+
+        // Kirim jawaban ke admin
+        kirim({
+          pin: saya.pin,
+          tipe: "jawab",
+          id: saya.id,
+          index: s.index,
+          pilihan: i
+        });
+
+
+        // Kunci semua tombol jawaban
+        document
+          .querySelectorAll("#pilihan .opsi-btn")
+          .forEach((x, n) => {
+
+            x.disabled = true;
+
+            x.classList.toggle(
+              "dipilih",
+              n === i
+            );
+          });
+
+
+        $("umpan-balik").textContent =
+          "Jawaban terkirim! Menunggu teman...";
+      });
+
+
+      wadah.append(b);
+    });
+  }
+
+
+  // INFORMASI USER
+
+  $("info-nomor").textContent =
+    `${aku.avatar} ${aku.nama}`;
+
+  $("info-streak").textContent =
+    `🔥 ${aku.streak}`;
+
+  $("info-streak").classList.toggle(
+    "api",
+    aku.streak >= 3
+  );
+
+  $("info-skor").textContent =
+    `Skor: ${aku.skor}`;
+
+
+  // Progress bar waktu
+  $("bar-waktu").style.width =
+    `${(s.sisa / s.soal.waktu) * 100}%`;
+
+
+  // PAPAN PERINGKAT
+
+  $("papan-siswa").hidden = !hasil;
+
+  // Streak 5 atau lebih akan mengaktifkan
+  // efek musik menegangkan.
+  Efek.tegang(aku.streak >= 5);
+
+
+  const tombol =
+    document.querySelectorAll(
+      "#pilihan .opsi-btn"
+    );
+
+
+  //  SOAL SUDAH SELESAI
+
+  if (hasil) {
+
+    // Tampilkan jawaban benar
+    // dan kunci semua tombol.
+    tombol.forEach((b, i) => {
+
+      b.disabled = true;
+
+      b.classList.add(
+        i === s.benar
+          ? "benar"
+          : "salah"
+      );
+    });
+
+
+    // Menghitung peringkat user
+    const rank =
+      urutkan(s.pemain).findIndex(
+        (p) => p.id === saya.id
+      ) + 1;
+
+
+   // EFEK SUARA
+
+    // Efek hanya dimainkan satu kali untuk setiap soal.
+    if (saya.sfxIndex !== s.index) {
+
+      saya.sfxIndex = s.index;
+
+      if (aku.benar) {
+        Efek.benar();
+        Efek.konfeti(50);
+      } else {
+        Efek.salah();
+      }
+    }
+
+
+    // EFEK STREAK
+
+    if (
+      aku.benar &&
+      aku.streak >= 3 &&
+      saya.streakIndex !== s.index
+    ) {
+
+      saya.streakIndex = s.index;
+
+      tampilStreak(aku.streak);
+    }
+
+
+    // PESAN HASIL JAWABAN
+
+    $("umpan-balik").textContent =
+      aku.benar
+        ? `✅ Benar +${aku.poin} (peringkat ${rank})${
+            aku.streak >= 3
+              ? ` 🔥 Menyala! Sterak ${aku.streak}`
+              : ""
+          }`
+        : `${
+            aku.sudahJawab
+              ? "❌ Kamu belum tepat"
+              : "⏰ YAH! Waktu habis"
+          } (peringkat ${rank})`;
+
+
+    // PERINGKAT SEMENTARA
+
+    // Menampilkan 5 user teratas.
+    isiPeringkat(
+      $("s-skor"),
+      s.pemain,
+      saya.id,
+      5
+    );
+
+
+    // Jika user berada di luar 5 besar,
+    // tetap tampilkan posisi user tersebut.
+    if (rank > 5) {
+
+      const li = buatEl(
+        "li",
+        "saya"
+      );
+
+      li.append(
+        buatEl(
+          "span",
+          "",
+          `${rank}. ${aku.avatar} ${aku.nama}`
+        ),
+
+        buatEl(
+          "span",
+          "",
+          `${aku.skor} poin`
+        )
+      );
+
+      $("s-skor").append(li);
+    }
+
+
+  // SOAL MASIH BERJALAN
+
+  } else {
+
+    // Tombol dikunci jika:
+    // - user sudah menjawab
+    // - admin sedang menjeda soal
+    tombol.forEach((b, i) => {
+
+      b.disabled =
+        aku.sudahJawab ||
+        s.dijeda;
+
+      b.classList.toggle(
+        "dipilih",
+        i === saya.pilih
+      );
+    });
+
+
+    // Pesan ketika admin menjeda soal
+    if (s.dijeda) {
+
+      $("umpan-balik").textContent =
+        "⏸ Dijeda oleh admin";
+
+    // Kosongkan pesan jika user belum menjawab
+    } else if (!aku.sudahJawab) {
+
+      $("umpan-balik").textContent = "";
+    }
+  }
+};
+
+
+// TAMPILKAN HALAMAN BERANDA
+
+tampilkan("beranda");

@@ -130,7 +130,7 @@ fieldset {
 }
 
 /* Grid PERAN & TAMPILAN ADMIN */
-.role-grid, .panel-grid {
+.panel-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--spasi);

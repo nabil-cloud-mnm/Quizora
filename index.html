@@ -61,5 +61,39 @@
       </form>
       <p class="guru-link"><button class="link-btn" data-view="beranda">← Kembali ke Beranda</button></p>
     </section>
+    <!-- PANEL ADMIN -->
+    <section id="guru-panel" class="view" hidden>
+      <h2>ADMIN MENU</h2>
+      <div class="panel-grid">
+        <article class="card">
+          <h3>Kuis Saya</h3>
+          <form id="form-kuis" class="form">
+            <label for="judul-kuis">Judul kuis baru</label>
+            <input type="text" id="judul-kuis" required>
+            <button class="btn" type="submit">Buat Kuis</button>
+          </form>
+          <ul id="daftar-kuis" class="daftar"></ul>
+        </article>
+
+        <article id="editor" class="card" hidden>
+          <h3>Soal : <span id="judul-editor"></span></h3>
+          <form id="form-soal" class="form">
+            <label for="tanya">Pertanyaan</label>
+            <input type="text" id="tanya" required>
+            <fieldset>
+              <legend>Pilihan (pilih bulatan untuk jawaban benar)</legend>
+              <div class="opsi-input"><input type="radio" name="benar" value="0" checked aria-label="Opsi A benar"><input type="text" class="opsi" aria-label="Pilihan A" placeholder="A" required></div>
+              <div class="opsi-input"><input type="radio" name="benar" value="1" aria-label="Opsi B benar"><input type="text" class="opsi" aria-label="Pilihan B" placeholder="B" required></div>
+              <div class="opsi-input"><input type="radio" name="benar" value="2" aria-label="Opsi C benar"><input type="text" class="opsi" aria-label="Pilihan C" placeholder="C" required></div>
+              <div class="opsi-input"><input type="radio" name="benar" value="3" aria-label="Opsi D benar"><input type="text" class="opsi" aria-label="Pilihan D" placeholder="D" required></div>
+            </fieldset>
+            <label for="waktu">Waktu menjawab</label>
+            <select id="waktu"><option value="10">10 detik</option><option value="20" selected>20 detik</option><option value="30">30 detik</option></select>
+            <button class="btn" type="submit">Tambah Soal</button>
+          </form>
+          <ul id="daftar-soal" class="daftar"></ul>
+        </article>
+      </div>
+    </section>
 </body>
 </html>  

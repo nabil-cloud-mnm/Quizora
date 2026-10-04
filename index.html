@@ -121,5 +121,61 @@
       </div>
       <div id="lobi-siswa" class="tengah"><div class="avatar-besar"><span id="lobi-avatar" class="kar">🦊</span></div><p class="nama-besar" id="lobi-nama">nama</p><p class="sapa">Kamu sudah masuk! Apakah kamu lihat nama panggilan di layar?</p><p class="sapa kecil">⏳ Menunggu admin memulai kuis ⏳</p></div>
     </section>
+    <!-- ADMIN SAAT KUIS BERJALAN -->
+    <section id="live-guru" class="view" hidden>
+      <div class="status">
+        <span id="g-nomor">Soal 1/1</span>
+        <span id="g-jawab">0 menjawab</span>
+        <span id="g-sisa">⏱ 0</span>
+      </div>
+      <div class="timer" aria-hidden="true"><div id="g-bar"></div></div>
+      <h2 id="g-teks" class="tengah"></h2>
+      <div id="g-tiles" class="pilihan"></div>
+      <article id="papan-mini" class="card" hidden>
+        <h3>Leaderboard Sementara</h3>
+        <ol id="g-skor" class="daftar skor"></ol>
+      </article>
+      <div class="kontrol">
+        <button id="btn-jeda" class="btn alt">⏸ Jeda</button>
+        <button id="btn-akhiri-soal" class="btn">⏭ Akhiri Soal</button>
+        <button id="btn-lanjut" class="btn" hidden>Soal Berikutnya</button>
+        <button id="btn-akhiri-kuis" class="btn danger">Akhiri Kuis</button>
+      </div>
+    </section>
+    <!-- USER SAAT KUIS BERJALAN -->
+    <section id="live-siswa" class="view" hidden>
+      <div class="status">
+        <span id="info-nomor">Siswa</span>
+        <span id="info-streak">🔥 0</span>
+        <span id="info-skor">Skor : 0</span>
+      </div>
+      <div class="timer" aria-hidden="true"><div id="bar-waktu"></div></div>
+      <h2 id="teks-soal" class="tengah" aria-live="polite"></h2>
+      <div id="pilihan" class="pilihan"></div>
+      <p id="umpan-balik" class="umpan" aria-live="assertive"></p>
+      <article id="papan-siswa" class="card" hidden>
+        <h3>Leaderboard Sementara</h3>
+        <ol id="s-skor" class="daftar skor"></ol>
+      </article>
+    </section>
+    <!-- PAPAN SKOR AKHIR -->
+    <section id="papan" class="view" hidden>
+      <h2>🏆 Papan Skor 🏆</h2>
+      <p id="hasil-akhir"></p>
+      <div id="podium" class="podium" hidden></div>
+      <ol id="daftar-skor" class="daftar skor"></ol>
+      <button class="btn" data-view="beranda">Home</button>
+    </section>
+  </main>
+
+  <div id="streak-pop" hidden aria-live="polite"><div class="api-besar">🔥</div><div id="streak-teks"></div><div id="streak-bonus"></div></div>
+
+  <div id="intro" hidden><h2 id="intro-judul">Pertanyaan 1</h2><div id="intro-lingkar"><span id="intro-angka">3</span></div><p>Siap-siap...</p></div>
+
+  <footer><p>Design by BIL Design &amp; JavaScript</p></footer>
+  <script src="mqtt.min.js"></script>
+  <script src="peerjs.min.js"></script>
+  <script src="efek.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>  

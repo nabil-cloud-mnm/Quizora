@@ -432,3 +432,31 @@ footer {
   font-weight: 600;
   margin-top: 24px;
 }
+
+/* Banner PIN */
+.pin-banner { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 20px; 
+  background: #fff; 
+  border-radius: 6px; 
+  padding: 12px 24px; 
+  color: #222; 
+  text-align: left; 
+  box-shadow: 0 2px 10px rgba(35,47,135,.12);
+}
+.pin-banner p { 
+  margin: 0; 
+  color: #222 !important; 
+  font-size: 1.05rem;
+}
+.pin-banner .pin-besar { 
+  box-shadow: none; 
+  padding: 0 0 0 20px; 
+  border-left: 3px solid #3b6bd0; 
+  border-radius: 0; 
+  color: #232f87; 
+  letter-spacing: 2px;
+}
+
+

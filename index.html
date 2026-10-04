@@ -95,5 +95,31 @@
         </article>
       </div>
     </section>
+    <!-- LAPORAN ADMIN -->
+    <section id="laporan" class="view" hidden>
+      <h2>📊 Laporan <span id="judul-laporan"></span></h2>
+      <p id="ringkasan"></p>
+      <div class="panel-grid">
+        <article class="card"><h3>Hasil Siswa</h3><ol id="tabel-siswa" class="daftar skor"></ol></article>
+        <article class="card"><h3>Ketepatan Setiap Soal</h3><ul id="statistik-soal" class="daftar"></ul></article>
+      </div>
+      <button class="btn" data-view="guru-panel">Kembali</button>
+    </section>
+    <!-- RUANG TUNGGU -->
+    <section id="lobi" class="view tengah" hidden>
+      <h2 id="lobi-judul">Ruang Tunggu</h2>
+      <div class="pin-banner"><p>Bergabung di <strong>halaman ini</strong><br>dengan PIN ruangan</p><div class="pin-besar" id="lobi-pin" aria-live="polite">------</div></div>
+      <h3>Pemain (<span id="jumlah-pemain">0</span>)</h3>
+      <ul id="daftar-pemain" class="pemain-grid"></ul>
+      <div id="lobi-guru">
+        <p id="status-jaringan" aria-live="polite"></p>
+        <p>User membuka web ini di perangkat mereka, lalu memasukkan PIN di beranda.</p>
+        <div class="kontrol">
+          <button id="btn-mulai" class="btn">Mulai Kuis</button>
+          <button class="btn danger" data-view="guru-panel">Batalkan</button>
+        </div>
+      </div>
+      <div id="lobi-siswa" class="tengah"><div class="avatar-besar"><span id="lobi-avatar" class="kar">🦊</span></div><p class="nama-besar" id="lobi-nama">nama</p><p class="sapa">Kamu sudah masuk! Apakah kamu lihat nama panggilan di layar?</p><p class="sapa kecil">⏳ Menunggu admin memulai kuis ⏳</p></div>
+    </section>
 </body>
 </html>  

@@ -605,5 +605,325 @@ const selesaiKuis = () => {
   siarkan();
 };
 
+// TOMBOL KONTROL ADMIN
 
+// btn mulai soal
+$("btn-mulai").addEventListener("click", mulaiSoal);
+
+// btn jeda / lanjutkan soal
+$("btn-jeda").addEventListener("click", () => {
+  ruang.dijeda = !ruang.dijeda;
+  siarkan();
+});
+
+// btn akhiri soal
+$("btn-akhiri-soal").addEventListener("click", akhiriSoal);
+
+// btn lanjut ke soal berikutnya
+$("btn-lanjut").addEventListener("click", () => {
+  if (ruang.index + 1 < ruang.kuis.soal.length) {
+    mulaiSoal();
+  } else {
+    selesaiKuis();
+  }
+});
+
+// btn akhiri seluruh kuis
+$("btn-akhiri-kuis").addEventListener("click", () => {
+  if (confirm("Akhiri kuis sekarang?")) {
+    selesaiKuis();
+  }
+});
+
+// MENAMPILKAN LAYAR ADMIN SESUAI STATUS RUANGAN
+
+// Menggambar layar admin sesuai status ruangan
+const renderGuru = () => {
+  const s = keadaan();
+
+  // Jika masih berada di lobi
+  if (ruang.status === "lobi") {
+    renderLobi(s, true);
+    return;
+  }
+
+  // Jika kuis sudah selesai
+  if (ruang.status === "selesai") {
+    $("hasil-akhir").textContent =
+      "Kuis selesai! Hasil tersimpan di menu Laporan.";
+
+    isiPodium(s.pemain, null);
+
+    isiPeringkat(
+      $("daftar-skor"),
+      s.pemain,
+      null,
+      10,
+      3
+    );
+
+    tampilkan("papan");
+    return;
+  }
+
+  // Menampilkan layar kuis yang sedang berlangsung
+  tampilkan("live-guru");
+
+  const hasil = ruang.status === "hasil";
+
+  // Jika soal selesai, bunyikan bel satu kali
+  if (hasil && ruang.bel !== ruang.index) {
+    ruang.bel = ruang.index;
+    Efek.bel();
+  }
+
+  // MEMBUAT PILIHAN JAWABAN
+
+  // Kotak pilihan hanya dibuat sekali untuk setiap soal
+  if (ruang.tampilIndex !== ruang.index) {
+    ruang.tampilIndex = ruang.index;
+
+    $("g-teks").textContent = s.soal.pertanyaan;
+
+    const wadah = $("g-tiles");
+
+    wadah.innerHTML = "";
+
+    s.soal.pilihan.forEach((teks, i) => {
+      const b = buatEl(
+        "button",
+        "opsi-btn",
+        `${SIMBOL[i]} ${teks}`
+      );
+
+      b.disabled = true;
+
+      b.append(
+        buatEl("span", "jumlah", "")
+      );
+
+      wadah.append(b);
+    });
+  }
+
+  // MENAMPILKAN HASIL JAWABAN
+  // - Jawaban benar diberi tanda
+  // - Jawaban salah diberi tanda
+  // - Jumlah pemilih setiap opsi ditampilkan
+  document
+    .querySelectorAll("#g-tiles .opsi-btn")
+    .forEach((b, i) => {
+
+      if (hasil) {
+        b.classList.add(
+          i === s.benar ? "benar" : "salah"
+        );
+
+        b.querySelector(".jumlah").textContent =
+          s.distribusi[i];
+      }
+    });
+};
+
+// INFORMASI SOAL DI LAYAR ADMIN
+
+const terjawab = s.pemain.filter((p) => p.sudahJawab).length;
+
+// Menampilkan nomor soal
+$("g-nomor").textContent =
+  `Soal ${s.index + 1}/${s.total}`;
+
+// Menampilkan jumlah user yang sudah menjawab
+$("g-jawab").textContent =
+  `${terjawab}/${s.pemain.length} sudah menjawab`;
+
+// Menampilkan sisa waktu
+$("g-sisa").textContent = s.dijeda
+  ? "⏸ Dijeda"
+  : `⏱ ${Math.ceil(s.sisa)}`;
+
+// Mengatur panjang progress bar waktu
+$("g-bar").style.width =
+  `${(s.sisa / s.soal.waktu) * 100}%`;
+
+// TOMBOL KONTROL SOAL
+
+// Tombol jeda disembunyikan setelah soal selesai
+$("btn-jeda").hidden = hasil;
+
+// Mengubah tulisan tombol jeda
+$("btn-jeda").textContent =
+  ruang.dijeda
+    ? "▶ Lanjutkan"
+    : "⏸ Jeda";
+
+// Tombol akhiri soal disembunyikan setelah soal selesai
+$("btn-akhiri-soal").hidden = hasil;
+
+// Tombol lanjut hanya muncul setelah soal selesai
+$("btn-lanjut").hidden = !hasil;
+
+// Mengubah tulisan tombol lanjut
+$("btn-lanjut").textContent =
+  s.index + 1 < s.total
+    ? "Soal Berikutnya ➜"
+    : "Lihat Hasil Akhir 🏆";
+
+// PAPAN PERINGKAT MINI
+
+$("papan-mini").hidden = !hasil;
+
+if (hasil) {
+  isiPeringkat(
+    $("g-skor"),
+    s.pemain,
+    null,
+    5
+  );
+}
+
+// LAPORAN HASIL KUIS
+
+// Menampilkan laporan berdasarkan kuis yang dipilih
+const bukaLaporan = (kuis) => {
+
+  // Mengambil data hasil berdasarkan kode kuis
+  const data = semuaHasil.filter(
+    (h) => h.kode === kuis.kode
+  );
+
+  // Menampilkan judul kuis
+  $("judul-laporan").textContent = kuis.judul;
+
+  // RINGKASAN NILAI
+  const rata = data.length
+    ? Math.round(
+        data.reduce(
+          (t, h) => t + h.skor,
+          0
+        ) / data.length
+      )
+    : 0;
+
+  $("ringkasan").textContent =
+    `${data.length} siswa mengerjakan, rata-rata skor ${rata}.`;
+
+  // HASIL PER SISWA
+
+  const ol = $("tabel-siswa");
+
+  ol.innerHTML = "";
+
+  // Urutkan siswa berdasarkan skor tertinggi
+  data
+    .sort((a, b) => b.skor - a.skor)
+    .forEach((h) => {
+
+      const li = buatEl("li");
+
+      // Nama dan avatar siswa
+      li.append(
+        buatEl(
+          "span",
+          "",
+          `${h.avatar} ${h.nama}`
+        )
+      );
+
+      // Skor dan persentase jawaban benar
+      li.append(
+        buatEl(
+          "span",
+          "",
+          `${h.skor} poin | ${
+            h.total
+              ? Math.round(
+                  (h.benar / h.total) * 100
+                )
+              : 0
+          }% benar`
+        )
+      );
+
+      ol.append(li);
+    });
+
+
+  // Jika belum ada siswa
+  if (data.length === 0) {
+    ol.append(
+      buatEl(
+        "li",
+        "",
+        "Belum ada siswa yang mengerjakan."
+      )
+    );
+  }
+
+  // STATISTIK SETIAP SOAL
+  const ul = $("statistik-soal");
+
+  ul.innerHTML = "";
+
+  kuis.soal.forEach((s, i) => {
+
+    // Mengambil jawaban siswa untuk soal tersebut
+    const jawab = data
+      .map((h) =>
+        h.detail.find(
+          (d) => d.id === s.id
+        )
+      )
+      .filter(Boolean);
+
+
+    // Menghitung persentase jawaban benar
+    const persen = jawab.length
+      ? Math.round(
+          (
+            jawab.filter(
+              (d) => d.benar
+            ).length / jawab.length
+          ) * 100
+        )
+      : 0;
+
+
+    // Membuat elemen soal
+    const li = buatEl("li");
+
+    li.append(
+      buatEl(
+        "span",
+        "",
+        `${i + 1}. ${s.pertanyaan}`
+      )
+    );
+
+    // PROGRESS BAR PERSENTASE BENAR
+    const bar = buatEl("div", "bar");
+    const isi = buatEl("div");
+
+    isi.style.width = `${persen}%`;
+
+    bar.append(isi);
+
+
+    // Menampilkan progress bar dan persentase
+    li.append(
+      bar,
+      buatEl(
+        "span",
+        "",
+        `${persen}%`
+      )
+    );
+
+    ul.append(li);
+  });
+
+
+  // Menampilkan halaman laporan
+  tampilkan("laporan");
+};
 

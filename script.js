@@ -135,7 +135,10 @@ const isiPodium = (pemain, idSaya) => {
 const renderLobi = (s, sebagaiGuru) => {
   const pin = sebagaiGuru ? ruang.pin : saya.pin;
   $("lobi-pin").textContent = pin.slice(0, 3) + " " + pin.slice(3); // 295 222
-  if (!sebagaiGuru) { setKarakter($("lobi-avatar"), saya.avatar); $("lobi-nama").textContent = saya.nama; }
+  if (!sebagaiGuru) { 
+    setKarakter($("lobi-avatar"), saya.avatar);
+    $("lobi-nama").textContent = saya.nama; 
+  }
   $("lobi-judul").textContent = s.judul;
   $("lobi-guru").hidden = !sebagaiGuru;
   $("lobi-siswa").hidden = sebagaiGuru;
@@ -195,7 +198,9 @@ const renderDaftarKuis = () => {
 // id create 
 const buatKode = () => {
   let kode;
-  do { kode = Math.random().toString(36).slice(2, 8).toUpperCase(); }
+  do {
+    kode = Math.random().toString(36).slice(2, 8).toUpperCase();
+  }
   while (daftarKuis.some((k) => k.kode === kode));
   return kode;
 };
@@ -214,7 +219,10 @@ const hapusKuis = (kode) => {
   semuaHasil = semuaHasil.filter((h) => h.kode !== kode);
   simpan(KUNCI_KUIS, daftarKuis);
   simpan(KUNCI_HASIL, semuaHasil);
-  if (kuisEdit && kuisEdit.kode === kode) { kuisEdit = null; $("editor").hidden = true; }
+  if (kuisEdit && kuisEdit.kode === kode) { 
+    kuisEdit = null;
+    $("editor").hidden = true;
+  }
   renderDaftarKuis();
 };
 
@@ -284,10 +292,13 @@ const tampilStatus = () => {
     ` (Relay: ${jaringan.relay} | P2P: ${jaringan.peer})`;
 };
 
-// Jalur relay: terhubung ke broker MQTT publik lewat WebSocket.
+// Jalur relay terhubung ke broker MQTT publik lewat WebSocket.
 // Admin mendengar topik "user", user mendengar topik "state".
 const sambungMqtt = (pin, sebagaiGuru, onData, onStatus) => {
-  if (typeof mqtt === "undefined") { onStatus(false); return; }
+  if (typeof mqtt === "undefined") { 
+    onStatus(false); 
+    return; 
+  }
   const dasar = `kuisseru-v1/${pin}/`;
   topikKirim = dasar + (sebagaiGuru ? "state" : "siswa");
   const topikTerima = dasar + (sebagaiGuru ? "siswa" : "state");
@@ -332,12 +343,267 @@ const keadaan = () => {
   };
 };
 
-// Kirim keadaan ke semua user, lalu perbarui layar admin
+// SIARKAN KEADAAN ROOM KE SEMUA SISWA DAN TAB LAIN
+
 const siarkan = () => {
-  kirim({ pin: ruang.pin, tipe: "state", s: keadaan() });
+  kirim({
+    pin: ruang.pin,
+    tipe: "state",
+    s: keadaan()
+  });
+
   renderGuru();
 };
 
+// MENERIMA PESAN DARI USER
+
+const terimaGuru = (msg) => {
+  if (!ruang || msg.pin !== ruang.pin) return;
+
+  const p = ruang.pemain.find((x) => x.id === msg.id);
+
+  // User mengecek apakah ruangan tersedia
+  if (msg.tipe === "cek") {
+    siarkan();
+
+  // USER bergabung ke ruangan
+  } else if (msg.tipe === "gabung") {
+    if (ruang.status === "lobi" && !p) {
+      ruang.pemain.push({
+        id: msg.id,
+        nama: msg.nama,
+        avatar: msg.avatar,
+        skor: 0,
+        streak: 0,
+        jawab: null,
+        benar: null,
+        poin: 0,
+        detail: []
+      });
+    }
+
+    siarkan();
+
+  // User mengirim jawaban
+  } else if (msg.tipe === "jawab") {
+
+    // Jawaban hanya diterima ketika
+    // 1. User terdaftar
+    // 2. Status sedang mengerjakan soal
+    // 3. Tidak sedang dijeda
+    // 4. User belum menjawab
+    // 5. Index soal sesuai
+    if (
+      !p ||
+      ruang.status !== "soal" ||
+      ruang.dijeda ||
+      p.jawab !== null ||
+      msg.index !== ruang.index
+    ) {
+      return;
+    }
+
+    prosesJawaban(p, msg.pilihan);
+  }
+};
+
+// BONUS STREAK
+
+const bonusStreak = (n) => {
+  return n >= 3
+    ? Math.min(n - 2, 5) * 100
+    : 0;
+};
+
+// TAMPILKAN ANIMASI STREAK
+const tampilStreak = (n) => {
+  const pop = $("streak-pop");
+
+  $("streak-teks").textContent = `Streak ${n}!`;
+  $("streak-bonus").textContent = `Bonus +${bonusStreak(n)} poin`;
+
+  pop.hidden = false;
+
+  Efek.streak();
+  Efek.konfeti(120, "ledak");
+
+  pop.classList.remove("jalan");
+  void pop.offsetWidth;
+  pop.classList.add("jalan");
+
+  setTimeout(() => {
+    pop.hidden = true;
+  }, 2200);
+};
+
+// PROSES JAWABAN USER
+// Menghitung skor berdasarkan kecepatan menjawab
+// ples tambahan bonus streak.
+const prosesJawaban = (p, pilihan) => {
+  const s = ruang.kuis.soal[ruang.index];
+
+  const benar = pilihan === s.benar;
+
+  p.jawab = pilihan;
+
+  // Menambah jumlah pilihan jawaban
+  ruang.distribusi[pilihan]++;
+
+  p.benar = benar;
+
+  if (benar) {
+    // Tambah streak jika jawaban benar
+    p.streak++;
+
+    // Hitung poin berdasarkan kecepatan + bonus streak
+    p.poin =
+      Math.round(
+        500 + 500 * (ruang.sisa / s.waktu)
+      ) + bonusStreak(p.streak);
+
+    p.skor += p.poin;
+
+  } else {
+    // kalau salah, streak dan poin direset
+    p.streak = 0;
+    p.poin = 0;
+  }
+
+  // Simpan detail jawaban
+  p.detail.push({
+    id: s.id,
+    benar: benar
+  });
+
+  // Jika semua user sudah menjawab,
+  // soal langsung diakhiri.
+  if (ruang.pemain.every((x) => x.jawab !== null)) {
+    akhiriSoal();
+  } else {
+    siarkan();
+  }
+};
+
+// MULAI SOAL BERIKUTNYA
+
+const mulaiSoal = () => {
+  ruang.status = "soal";
+  ruang.index++;
+
+  ruang.sisa = ruang.kuis.soal[ruang.index].waktu;
+  ruang.dijeda = false;
+
+  ruang.distribusi = [0, 0, 0, 0];
+
+  // Reset jawaban setiap user
+  ruang.pemain.forEach((p) => {
+    p.jawab = null;
+    p.benar = null;
+    p.poin = 0;
+  });
+
+  // Hentikan timer sebelumnya
+  clearInterval(timerRuang);
+
+  let terakhir = Date.now();
+
+  // Jalankan timer
+  timerRuang = setInterval(() => {
+    const sekarang = Date.now();
+
+    // Saat tidak dijeda, waktu terus berkurang
+    if (!ruang.dijeda) {
+      ruang.sisa -= (sekarang - terakhir) / 1000;
+
+      // Jika waktu habis
+      if (ruang.sisa <= 0) {
+        ruang.sisa = 0;
+        akhiriSoal();
+        return;
+      }
+    }
+
+    terakhir = sekarang;
+
+    // Kirim keadaan terbaru
+    siarkan();
+
+  }, 250);
+
+  siarkan();
+};
+
+// TUTUP SOAL
+
+// User yang belum menjawab dianggap salah.
+const tutupSoal = () => {
+  clearInterval(timerRuang);
+
+  ruang.status = "hasil";
+
+  const s = ruang.kuis.soal[ruang.index];
+
+  ruang.pemain.forEach((p) => {
+    if (p.jawab === null) {
+      p.benar = false;
+      p.streak = 0;
+      p.poin = 0;
+
+      p.detail.push({
+        id: s.id,
+        benar: false
+      });
+    }
+  });
+};
+
+
+// AKHIRI SOAL
+
+const akhiriSoal = () => {
+  tutupSoal();
+  siarkan();
+};
+
+// SELESAI KUIS
+
+// Menyimpan hasil setiap user untuk laporan.
+const selesaiKuis = () => {
+  // Jika kuis sudah selesai, hentikan proses
+  if (ruang.status === "selesai") return;
+
+  // Jika masih mengerjakan soal,
+  // tutup soal terlebih dahulu.
+  if (ruang.status === "soal") {
+    tutupSoal();
+  }
+
+  clearInterval(timerRuang);
+
+  ruang.status = "selesai";
+
+  // Simpan hasil setiap user
+  ruang.pemain.forEach((p) => {
+    semuaHasil.push({
+      kode: ruang.kuis.kode,
+      nama: p.nama,
+      avatar: p.avatar,
+      skor: p.skor,
+
+      benar: p.detail.filter((d) => d.benar).length,
+
+      total: p.detail.length,
+
+      detail: p.detail
+    });
+  });
+
+  // Simpan hasil ke penyimpanan
+  simpan(KUNCI_HASIL, semuaHasil);
+
+  // Kirim keadaan terbaru
+  siarkan();
+};
 
 
 

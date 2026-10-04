@@ -249,7 +249,7 @@ footer {
 }
 /* Respon hp */
 @media (max-width: 480px) {
-  .role-grid, .pilihan { grid-template-columns: 1fr; }
+  .pilihan { grid-template-columns: 1fr; }
   .opsi-btn { padding: 18px 12px; }
   .topbar h1 { font-size: 1.15rem; }
 }
@@ -278,7 +278,7 @@ footer {
   font-size: 1rem;
 }
 .avatar-grid {
-  display: grid;]
+  display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
@@ -308,13 +308,6 @@ footer {
 }
 .avatar-grid input:focus-visible + span {
   outline: 3px solid var(--biru);
-}
-.daftar .kode {
-  background: var(--ungu-muda);
-  border-radius: 6px;
-  padding: 2px 8px;
-  font-family: monospace;
-  font-weight: 700;
 }
 .aksi {
   display: flex;

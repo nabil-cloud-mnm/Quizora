@@ -105,6 +105,10 @@ main {
   margin-top: var(--spasi);
   box-shadow: 0 4px 0 #a01229;
 }
+.btn:active { 
+  transform: translateY(3px); 
+  box-shadow: 0 1px 0 #161f5e; 
+}
 .form {
   display: flex;
   flex-direction: column;
@@ -164,7 +168,7 @@ fieldset {
   font-weight: 600;
 }
 .skor li.saya {
-  background: #fff3c4;
+  background: #dbe8ff; 
   border-radius: 8px;
 }
 /* LAYAR KUIS */
@@ -176,7 +180,7 @@ fieldset {
 }
 .timer {
   height: 14px;
-  background: #ddd;
+  background: #cfe0ff;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -309,7 +313,7 @@ footer {
 }
 .avatar-grid input:checked + span {
   border-color: var(--ungu);
-  background: #fff3c4;
+  background: #dbe8ff;
 }
 .avatar-grid input:focus-visible + span {
   outline: 3px solid var(--biru);
@@ -359,11 +363,13 @@ footer {
 }
 
 .pemain-grid li {
-  background: #fff;
-  border-radius: 20px;
-  padding: 8px 14px;
-  font-weight: 700;
-  animation: goyang .4s;
+  background: #fff; 
+  color: var(--teks); 
+  border-radius: 20px; 
+  padding: 8px 14px; 
+  font-weight: 700; 
+  box-shadow: 0 2px 6px rgba(35,47,135,.12); 
+  animation: goyang .4s; 
 }
 
 .kontrol {

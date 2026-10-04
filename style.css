@@ -11,10 +11,29 @@
   font-family: "Inter", "Segoe UI", system-ui, sans-serif;
 }
 
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--ungu-muda); color: #222; min-height: 100vh; display: flex; flex-direction: column; }
-main { flex: 1; width: 100%; max-width: 960px; margin: 0 auto; padding: var(--spasi); }
-[hidden] { display: none !important; }
+* { 
+  box-sizing: border-box; 
+}
+body { 
+  margin: 0; 
+  background: var(--ungu-muda); 
+  color: #222; 
+  min-height: 100vh; 
+  display: flex; 
+  flex-direction: 
+  column; 
+}
+main { 
+  flex: 1; 
+  width: 100%; 
+  max-width: 960px; 
+  margin: 0 auto; 
+  padding: var(--spasi); 
+}
+
+[hidden] { 
+  display: none !important; 
+}
 
 /* HEADER NAV FLEXBOX */
 .topbar { 

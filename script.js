@@ -97,3 +97,55 @@ const kirim = (msg) => {
 document.querySelectorAll("[data-view]").forEach((btn) =>
   btn.addEventListener("click", () => { keluar(); tampilkan(btn.dataset.view); })
 );
+
+// Leaderboard ke elemen <ol>
+const isiPeringkat = (ol, pemain, idSaya, batas = 10, mulai = 0) => {
+  ol.innerHTML = "";
+  ol.hidden = pemain.length <= mulai;
+  const medali = ["🥇", "🥈", "🥉"];
+  urutkan(pemain).slice(mulai, mulai + batas).forEach((p, idx) => {
+    const i = idx + mulai;
+    const li = buatEl("li", p.id === idSaya ? "saya" : "");
+    li.append(buatEl("span", "", `${medali[i] || i + 1 + "."} ${p.avatar} ${p.nama}${p.streak >= 3 ? ` 🔥${p.streak}` : ""}`));
+    li.append(buatEl("span", "", `${p.skor} poin`));
+    ol.append(li);
+  });
+};
+
+// podium 123
+const isiPodium = (pemain, idSaya) => {
+  const wadah = $("podium");
+  wadah.innerHTML = "";
+  const top = urutkan(pemain).slice(0, 3);
+  wadah.hidden = top.length === 0;
+  [1, 0, 2].forEach((r) => {
+    const p = top[r];
+    if (!p) return;
+    const kol = buatEl("div", `juara juara${r + 1}${p.id === idSaya ? " saya" : ""}`);
+    if (r === 0) kol.append(buatEl("div", "mahkota", "👑"));
+    const kar = karakter(p.avatar);
+    kar.classList.add("kar-juara");
+    kol.append(kar, buatEl("div", "juara-nama", p.nama), buatEl("div", "juara-skor", `${p.skor} poin`));
+    kol.append(buatEl("div", "juara-blok", ["🥇", "🥈", "🥉"][r] + " " + (r + 1)));
+    wadah.append(kol);
+  });
+};
+
+// waiting room only user and admin
+const renderLobi = (s, sebagaiGuru) => {
+  const pin = sebagaiGuru ? ruang.pin : saya.pin;
+  $("lobi-pin").textContent = pin.slice(0, 3) + " " + pin.slice(3); // 295 222
+  if (!sebagaiGuru) { setKarakter($("lobi-avatar"), saya.avatar); $("lobi-nama").textContent = saya.nama; }
+  $("lobi-judul").textContent = s.judul;
+  $("lobi-guru").hidden = !sebagaiGuru;
+  $("lobi-siswa").hidden = sebagaiGuru;
+  $("jumlah-pemain").textContent = s.pemain.length;
+  $("btn-mulai").disabled = s.pemain.length === 0;
+  const ul = $("daftar-pemain");
+  ul.innerHTML = "";
+  s.pemain.forEach((p) => {
+    const li = buatEl("li", "pemain");
+    li.append(karakter(p.avatar), buatEl("span", "", p.nama));
+    ul.append(li);
+  });
+};

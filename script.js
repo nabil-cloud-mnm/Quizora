@@ -300,4 +300,44 @@ const sambungMqtt = (pin, sebagaiGuru, onData, onStatus) => {
   });
 };
 
+// Jalur P2P user mendaftar ke server PeerJS dengan id berdasarkan PIN
+const siapkanPeerGuru = (pin) => {
+  if (typeof Peer === "undefined") { jaringan.peer = "tidak termuat"; tampilStatus(); return; }
+  tampilStatus();
+  peer = new Peer("kuisseru-" + pin);
+  peer.on("open", () => { jaringan.peer = "✅"; tampilStatus(); });
+  peer.on("error", (err) => { jaringan.peer = `⚠️ ${err.type}`; tampilStatus(); });
+  peer.on("connection", (c) => {
+    koneksi.push(c);
+    c.on("data", terimaGuru);
+    c.on("close", () => { koneksi = koneksi.filter((x) => x !== c); });
+  });
+};
+
+// "publik" yang dikirim ke user TANPA kunci jawaban sebelum waktunya
+const keadaan = () => {
+  const s = ruang.kuis.soal[ruang.index];
+  const buka = ["hasil", "selesai"].includes(ruang.status);
+  return {
+    status: ruang.status, judul: ruang.kuis.judul, index: ruang.index,
+    total: ruang.kuis.soal.length,
+    soal: s && ruang.status !== "selesai" ? { pertanyaan: s.pertanyaan, pilihan: s.pilihan, waktu: s.waktu } : null,
+    sisa: ruang.sisa, dijeda: ruang.dijeda,
+    benar: buka && s ? s.benar : null,
+    distribusi: ruang.distribusi,
+    pemain: ruang.pemain.map((p) => ({
+      id: p.id, nama: p.nama, avatar: p.avatar, skor: p.skor, streak: p.streak,
+      sudahJawab: p.jawab !== null, benar: p.benar, poin: p.poin,
+    })),
+  };
+};
+
+// Kirim keadaan ke semua user, lalu perbarui layar admin
+const siarkan = () => {
+  kirim({ pin: ruang.pin, tipe: "state", s: keadaan() });
+  renderGuru();
+};
+
+
+
 

@@ -72,3 +72,93 @@ main {
   background: #fff; 
   color: var(--ungu); 
 }
+/* UMUM */
+.card { 
+  background: #fff; 
+  border-radius: var(--radius); 
+  padding: 20px; 
+  box-shadow: 0 4px 12px rgba(0,0,0,.1); 
+}
+.btn { 
+  background: var(--ungu); 
+  color: #fff; 
+  border: 0; 
+  border-radius: 10px; 
+  padding: 12px 20px; 
+  font-size: 1rem; 
+  font-weight: 700; 
+  cursor: pointer; 
+  transition: transform .15s; 
+}
+.btn:hover { 
+  transform: scale(1.05);
+}
+.btn.alt {
+  background: var(--biru);
+}
+.btn.danger {
+  background: var(--merah);
+  margin-top: var(--spasi);
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 520px;
+}
+input[type="text"], input[type="password"], select {
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  width: 100%; 
+}
+fieldset {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+}
+.opsi-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+.error {
+  color: var(--merah);
+  margin: 0;
+  min-height: 1.2em;
+}
+
+/* Grid PERAN & TAMPILAN ADMIN */
+.role-grid, .panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spasi);
+}
+.daftar {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.daftar li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+.daftar button {
+  background: var(--merah);
+  color: #fff;
+  border: 0;
+  border-radius: 6px; padding: 4px 10px;
+  cursor: pointer;
+}
+.skor li {
+  font-weight: 600;
+}
+.skor li.saya {
+  background: #fff3c4;
+  border-radius: 8px;
+}

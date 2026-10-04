@@ -413,57 +413,10 @@ footer {
   }
 }
 
-/* Bentuk kartu, tombol & PIN */
-h2 { text-align: center; }
-#beranda > p { text-align: center; color: var(--abu); }
-.card { border-radius: 20px; }
-.btn { border-radius: 12px; }
-.kode-form input::placeholder { color: #bbb; }
-.kode-form label { font-weight: 700; font-size: .9rem; }
-.kode-form { max-width: 400px; }
-
-/* Latar ungu, kartu putih, tombol gelap */
-:root {
-  --latar: linear-gradient(180deg, #6b4fa8 0%, #5b3d9a 55%, #4a2a80 100%);
-  --gelap: #333;
-}
-body {
-  background: var(--latar);
-  background-attachment: fixed;
-}
-.topbar {
-  background: #1f1b2b;
-}
-.view > h2, .view > p, footer, .status {
-  color: #fff;
-}
-.view > h2 {
-  text-shadow: 0 3px 0 rgba(0,0,0,.25);
-  font-weight: 800;
-}
-.card, .form {
-  color: #222;
-}
-.card label, .form label {
-  font-weight: 700;
-}
-.btn {
-  background: var(--gelap);
-  box-shadow: 0 4px 0 #1a1a1a;
-}
-.btn:hover {
-  transform: translateY(-1px);
-}
-.btn:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 #1a1a1a;
-}
-.btn.alt {
-  background: var(--biru);
-  box-shadow: 0 4px 0 #264a96;
-}
-.btn.danger {
-  box-shadow: 0 4px 0 #a01229;
+/* Kartu, Forn, Notes, and Home */
+#beranda > p { 
+  text-align: center;
+  color: var(--abu);
 }
 #gabung .form, #beranda .form {
   margin: 0 auto;
@@ -471,23 +424,11 @@ body {
   border-radius: 6px;
   padding: 16px;
 }
-#gabung h2 {
-  margin-bottom: 12px;
-}
 #gabung input[type=text] {
   font-weight: 700;
-}
-.avatar-grid span {
-  background: #f1e9ff;
-}
-.avatar-grid input:checked + span {
-  border-color: var(--gelap);
 }
 .catatan {
   text-align: center;
   font-weight: 600;
   margin-top: 24px;
-}
-.link-btn {
-  color: #fff;
 }

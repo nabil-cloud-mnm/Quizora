@@ -723,7 +723,6 @@ const renderGuru = () => {
           s.distribusi[i];
       }
     });
-};
 
 // INFORMASI SOAL DI LAYAR ADMIN
 
@@ -781,6 +780,7 @@ if (hasil) {
     5
   );
 }
+};
 
 // LAPORAN HASIL KUIS
 

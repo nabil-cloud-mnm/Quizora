@@ -334,3 +334,78 @@ footer {
   height: 100%;
   background: var(--hijau);
 }
+
+/* REAL TIME */
+.tengah { 
+  text-align: center; 
+}
+.pin-besar { 
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 8px;
+  background: #fff;
+  color: var(--ungu);
+  border-radius: var(--radius);
+  padding: 12px 24px;
+  display: inline-block;
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+
+.pemain-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+}
+
+.pemain-grid li {
+  background: #fff;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-weight: 700;
+  animation: goyang .4s;
+}
+
+.kontrol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: var(--spasi);
+}
+
+.kontrol .btn.danger {
+  margin-top: 0;
+}
+
+#g-bar {
+  height: 100%;
+  width: 100%;
+  background: var(--hijau);
+  transition: width .25s linear;
+}
+
+.opsi-btn:disabled {
+  cursor: default;
+}
+
+.opsi-btn.dipilih {
+  outline: 5px solid #000;
+}
+
+.opsi-btn .jumlah {
+  display: block;
+  font-size: 1.6rem;
+}
+
+#papan-mini {
+  margin-top: var(--spasi);
+}
+@media (max-width: 480px) {
+  .pin-besar {
+    font-size: 2rem; letter-spacing: 4px;
+  }
+}
+

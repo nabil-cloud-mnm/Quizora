@@ -615,3 +615,616 @@ body:not([data-view]) .topbar {
 @keyframes nyala { from { transform: scale(1) rotate(-4deg); } to { transform: scale(1.15) rotate(4deg); } }
 @keyframes munculApi { 0% { opacity: 0; } 12%, 80% { opacity: 1; } 100% { opacity: 0; } }
 
+/* KARAKTER BERGERAK */
+
+.kar {
+  display: inline-block;
+  font-size: 1.6em;
+  line-height: 1;
+  transform-origin: 50% 90%;
+}
+
+.avatar-besar .kar {
+  font-size: 6rem;
+}
+
+.pemain-grid li.pemain {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* ----- Graknya karakter ----- */
+
+.gerak0 {
+  animation: lompat 1s ease-in-out infinite;
+}
+
+.gerak1 {
+  animation: goyangan 1.2s ease-in-out infinite;
+}
+
+.gerak2 {
+  animation: melayang 2s ease-in-out infinite;
+}
+
+.gerak3 {
+  animation: denyut 1.1s ease-in-out infinite;
+}
+
+.gerak4 {
+  animation: ayun 1.6s ease-in-out infinite;
+}
+
+.gerak5 {
+  animation: gemetar 0.5s linear infinite;
+}
+
+.gerak6 {
+  animation: putar 2.4s ease-in-out infinite;
+}
+
+.gerak7 {
+  animation: dansa 1s ease-in-out infinite;
+}
+
+
+/* ----- pilih Avatar ----- */
+
+.pilih-avatar {
+  animation: none;
+}
+
+.avatar-grid label:hover .pilih-avatar,
+.avatar-grid input:checked + .pilih-avatar {
+  animation: lompat 0.8s ease-in-out infinite;
+}
+
+
+/* ----- Keyframes karakter ----- */
+
+@keyframes lompat {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+
+  40% {
+    transform: translateY(-14%) scale(0.95, 1.08);
+  }
+
+  70% {
+    transform: translateY(0) scale(1.08, 0.92);
+  }
+}
+
+@keyframes goyangan {
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes melayang {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8%);
+  }
+}
+
+@keyframes denyut {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes ayun {
+  0%,
+  100% {
+    transform: translateX(-6%) rotate(-6deg);
+  }
+
+  50% {
+    transform: translateX(6%) rotate(6deg);
+  }
+}
+
+@keyframes gemetar {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-3%);
+  }
+
+  75% {
+    transform: translateX(3%);
+  }
+}
+
+@keyframes putar {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0);
+  }
+
+  80% {
+    transform: rotate(360deg) scale(1.1);
+  }
+}
+
+@keyframes dansa {
+  0%,
+  100% {
+    transform: skewX(0) translateY(0);
+  }
+
+  25% {
+    transform: skewX(-8deg) translateY(-6%);
+  }
+
+  75% {
+    transform: skewX(8deg) translateY(-6%);
+  }
+}
+
+
+/* ANIMASI CERIA */
+
+#hiasan {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#hiasan span {
+  position: absolute;
+  bottom: -80px;
+  opacity: 0.14;
+  animation: naik linear infinite;
+}
+
+@keyframes naik {
+  to {
+    transform: translateY(-115vh) rotate(360deg);
+  }
+}
+
+
+/* ----- Posisi elemen utama ----- */
+
+.topbar,
+main,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ----- Tombol suara ----- */
+
+#btn-suara {
+  position: fixed;
+  bottom: 14px;
+  left: 10px;
+  z-index: 40;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 0;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(35, 47, 135, 0.3);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+#btn-suara:hover {
+  transform: scale(1.1);
+}
+
+
+/* ----- Animasi jawaban ----- */
+
+.opsi-btn {
+  animation: muncul 0.45s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+.opsi-btn:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.opsi-btn:nth-child(3) {
+  animation-delay: 0.16s;
+}
+
+.opsi-btn:nth-child(4) {
+  animation-delay: 0.24s;
+}
+
+.opsi-btn.benar {
+  animation: goyang 0.4s;
+}
+
+@keyframes muncul {
+  from {
+    opacity: 0;
+    transform: scale(0.5) translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+
+/* ----- Animasi daftar skor ----- */
+
+.skor li {
+  animation: geser 0.5s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+}
+
+.skor li:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.skor li:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.skor li:nth-child(n + 4) {
+  animation-delay: 0.3s;
+}
+
+@keyframes geser {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+
+/* ----- Animasi papan dan intro ----- */
+
+#papan > h2 {
+  animation: lompat 1s ease-in-out infinite;
+}
+
+#intro h2 {
+  animation: muncul 0.5s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+
+/* ----- Kurangi animasi jika user memilih reduced motion ----- */
+
+@media (prefers-reduced-motion: reduce) {
+  .kar,
+  .brand-logo,
+  .pilih-avatar,
+  #hiasan,
+  .opsi-btn,
+  .skor li,
+  #papan > h2 {
+    animation: none !important;
+  }
+}
+
+
+/* PODIUM JUARA 1-3 */
+
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 10px;
+  margin: 20px auto 24px;
+  max-width: 520px;
+}
+
+.juara {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+  animation: muncul 0.6s both;
+}
+
+.juara .kar-juara {
+  font-size: 3.6rem;
+}
+
+.juara1 .kar-juara {
+  font-size: 5.4rem;
+}
+
+.mahkota {
+  font-size: 2.2rem;
+  animation: lompat 1s ease-in-out infinite;
+  margin-bottom: -6px;
+}
+
+.juara-nama {
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--teks);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 4px;
+}
+
+.juara1 .juara-nama {
+  font-size: 1.3rem;
+}
+
+.juara-skor {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #3b6bd0;
+  margin-bottom: 6px;
+}
+
+.juara-blok {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10px;
+  border-radius: 12px 12px 0 0;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.4rem;
+  transform-origin: bottom;
+  animation: naikBlok 0.7s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+  box-shadow: 0 4px 10px rgba(35, 47, 135, 0.25);
+}
+
+
+/* ----- Blok podium ----- */
+
+.juara1 .juara-blok {
+  height: 150px;
+  background: linear-gradient(180deg, #ffc107, #e0a100);
+  animation-delay: 0.9s;
+}
+
+.juara2 .juara-blok {
+  height: 110px;
+  background: linear-gradient(180deg, #b0bec5, #8a9aa3);
+  animation-delay: 0.5s;
+}
+
+.juara3 .juara-blok {
+  height: 80px;
+  background: linear-gradient(180deg, #e0956a, #bd7446);
+  animation-delay: 0.1s;
+}
+
+
+/* ----- Urutan animasi podium ----- */
+
+.juara3 {
+  animation-delay: 0.1s;
+}
+
+.juara2 {
+  animation-delay: 0.5s;
+}
+
+.juara1 {
+  animation-delay: 0.9s;
+}
+
+
+/* ----- Penanda pemain sendiri ----- */
+
+.juara.saya .juara-nama {
+  background: #fff3c4;
+  border-radius: 8px;
+  padding: 0 8px;
+}
+
+
+/* ----- Animasi naik podium ----- */
+
+@keyframes naikBlok {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+
+/* ----- Responsive podium ----- */
+
+@media (max-width: 480px) {
+  .juara .kar-juara {
+    font-size: 2.8rem;
+  }
+
+  .juara1 .kar-juara {
+    font-size: 4.2rem;
+  }
+
+  .juara-nama {
+    font-size: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .juara,
+  .juara-blok,
+  .mahkota {
+    animation: none !important;
+  }
+}
+
+
+/* MODE DEG-DEGAN (STREAK 5+) */
+
+body.tegang::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: inset 0 0 110px rgba(226, 27, 60, 0.45);
+  animation: detakLayar 0.8s ease-out infinite;
+}
+
+@keyframes detakLayar {
+  0% {
+    opacity: 0.2;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  18% {
+    opacity: 0.3;
+  }
+
+  28% {
+    opacity: 0.85;
+  }
+
+  50%,
+  100% {
+    opacity: 0.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.tegang::after {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+#papan-siswa {
+  margin-top: var(--spasi);
+}
+
+
+/*  PERBAIKAN HP Konten tidak boleh melebihi lebar layar */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+main,
+.card,
+.form,
+fieldset,
+.panel-grid > * {
+  min-width: 0;
+}
+
+fieldset {
+  max-width: 100%;
+}
+
+.panel-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 768px) {
+  .panel-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.daftar li {
+  flex-wrap: wrap;
+}
+
+.daftar li > strong,
+.daftar li > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.aksi {
+  flex-wrap: wrap;
+}
+
+.status {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+input[type="text"],
+input[type="password"],
+select {
+  max-width: 100%;
+}
+
+
+/* LOGIN ADMIN */
+
+body[data-view="guru-login"] .topbar {
+  display: none;
+}
+
+#guru-login .form {
+  margin: 0 auto;
+  max-width: 400px;
+  background: #fff;
+}
+
+#guru-login .kode-form input {
+  font-size: 1rem;
+  text-align: left;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#guru-login label {
+  text-align: left;
+}
+
+.form label.tampil-pass {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.tampil-pass input {
+  width: auto;
+}

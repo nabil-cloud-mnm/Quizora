@@ -218,3 +218,86 @@ const hapusKuis = (kode) => {
   renderDaftarKuis();
 };
 
+// Editor soal
+const bukaEditor = (kuis) => {
+  kuisEdit = kuis;
+  $("editor").hidden = false;
+  $("judul-editor").textContent = kuis.judul;
+  renderDaftarSoal();
+};
+
+const renderDaftarSoal = () => {
+  const ul = $("daftar-soal");
+  ul.innerHTML = "";
+  kuisEdit.soal.forEach((s) => {
+    const li = buatEl("li");
+    li.append(buatEl("span", "", s.pertanyaan));
+    const hapus = buatEl("button", "", "Hapus");
+    hapus.addEventListener("click", () => {
+      kuisEdit.soal = kuisEdit.soal.filter((x) => x.id !== s.id);
+      simpan(KUNCI_KUIS, daftarKuis);
+      renderDaftarSoal();
+    });
+    li.append(hapus);
+    ul.append(li);
+  });
+};
+
+$("form-soal").addEventListener("submit", (e) => {
+  e.preventDefault();
+  kuisEdit.soal.push({
+    id: Date.now(),
+    pertanyaan: $("tanya").value.trim(),
+    pilihan: [...document.querySelectorAll(".opsi")].map((i) => i.value.trim()),
+    benar: Number(document.querySelector('input[name="benar"]:checked').value),
+    waktu: Number($("waktu").value),
+  });
+  simpan(KUNCI_KUIS, daftarKuis);
+  e.target.reset();
+  renderDaftarSoal();
+});
+
+// Ruangan live
+// Admin membuka room buat PIN, buka kanal, tampilkan ruang tunggu
+const bukaRuangan = (kuis) => {
+  if (kuis.soal.length === 0) { alert("Kuis ini belum punya soal."); return; }
+  keluar();
+  ruang = {
+    pin: String(100000 + Math.floor(Math.random() * 900000)),
+    kuis, status: "lobi", index: -1, sisa: 0, dijeda: false,
+    pemain: [], distribusi: [0, 0, 0, 0], tampilIndex: -2,
+  };
+  kanal = new BroadcastChannel("kuisseru");
+  kanal.onmessage = (e) => terimaGuru(e.data);
+  jaringan = { peer: "⏳", relay: "⏳" };
+  siapkanPeerGuru(ruang.pin);
+  sambungMqtt(ruang.pin, true, terimaGuru, (ok) => { jaringan.relay = ok ? "✅" : "⚠️"; tampilStatus(); });
+  tampilkan("lobi");
+  siarkan();
+};
+
+// Menampilkan status jaringan di ruang tunggu admin
+const tampilStatus = () => {
+  const online = Object.values(jaringan).includes("✅");
+  $("status-jaringan").textContent =
+    (online ? "✅ Online - User dari perangkat lain bisa bergabung." : "⏳ Menghubungkan ke Room...") +
+    ` (Relay: ${jaringan.relay} | P2P: ${jaringan.peer})`;
+};
+
+// Jalur relay: terhubung ke broker MQTT publik lewat WebSocket.
+// Admin mendengar topik "user", user mendengar topik "state".
+const sambungMqtt = (pin, sebagaiGuru, onData, onStatus) => {
+  if (typeof mqtt === "undefined") { onStatus(false); return; }
+  const dasar = `kuisseru-v1/${pin}/`;
+  topikKirim = dasar + (sebagaiGuru ? "state" : "siswa");
+  const topikTerima = dasar + (sebagaiGuru ? "siswa" : "state");
+  klienMqtt = mqtt.connect(BROKER, { reconnectPeriod: 3000, connectTimeout: 8000 });
+  klienMqtt.on("connect", () => klienMqtt.subscribe(topikTerima, () => onStatus(true)));
+  klienMqtt.on("close", () => onStatus(false));
+  klienMqtt.on("error", () => onStatus(false));
+  klienMqtt.on("message", (topik, isi) => {
+    try { onData(JSON.parse(isi.toString())); } catch { /* abaikan pesan rusak */ }
+  });
+};
+
+

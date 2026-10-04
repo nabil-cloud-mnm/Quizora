@@ -1,1 +1,55 @@
+:root {
+  --ungu: #232f87;
+  --ungu-muda: #ecf7ff;
+  --merah: #e21b3c;
+  --biru: #3b6bd0;
+  --kuning: #d89e00;
+  --hijau: #26890c;
+  --abu: #666;
+  --radius: 14px;
+  --spasi: 16px;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
 
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ungu-muda); color: #222; min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; width: 100%; max-width: 960px; margin: 0 auto; padding: var(--spasi); }
+[hidden] { display: none !important; }
+
+/* HEADER NAV FLEXBOX */
+.topbar { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  flex-wrap: wrap; 
+  gap: 8px; 
+  background: linear-gradient(90deg, #1e2f7a, #3d6bd6); 
+  color: #fff; 
+  padding: 8px var(--spasi); 
+}
+.topbar h1 { 
+  margin: 0; 
+  font-size: 1.2rem; 
+  font-weight: 800; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+}
+.logo { 
+  width: 40px; 
+  height: 40px; 
+  object-fit: contain; 
+}
+.nav-btn { 
+  background: transparent; 
+  color: #fff; 
+  border: 2px solid #fff; 
+  border-radius: 20px; 
+  padding: 6px 14px; 
+  cursor: pointer; 
+  font-weight: 600; 
+}
+.nav-btn:hover { 
+  background: #fff; 
+  color: var(--ungu); 
+}
